@@ -1,0 +1,165 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_BOOKS 1000
+#define MAX_MEMBERS 500
+#define NAME_LENGTH 50
+#define TITLE_LENGTH 100
+typedef struct {
+    int bookID;
+    char title[TITLE_LENGTH];
+    char author[NAME_LENGTH];
+    int isIssued;
+} Book;
+typedef struct {
+    int memberID;
+    char name[NAME_LENGTH];
+    int booksIssued;
+} Member;
+Book library[MAX_BOOKS];
+Member members[MAX_MEMBERS];
+int bookCount = 0;
+int memberCount = 0;
+void addBook() {
+    if (bookCount >= MAX_BOOKS) {
+        printf("Library is full.\n");
+        return;
+    }
+    printf("Enter book title: ");
+    scanf(" %[^\n]", library[bookCount].title);
+    printf("Enter book author: ");
+    scanf(" %[^\n]", library[bookCount].author);
+    library[bookCount].bookID = bookCount + 1;
+    library[bookCount].isIssued = 0;
+    bookCount++;
+    printf("Book added successfully.\n");
+}
+void viewBooks() {
+    if (bookCount == 0) {
+        printf("No books available.\n");
+        return;
+    }
+    printf("Library Books:\n");
+    for (int i = 0; i < bookCount; i++) {
+        printf("Book ID: %d\n", library[i].bookID);
+        printf("Title: %s\n", library[i].title);
+        printf("Author: %s\n", library[i].author);
+        printf("Issued: %s\n\n", library[i].isIssued ? "Yes" : "No");
+    }
+}
+void addMember() {
+    if (memberCount >= MAX_MEMBERS) {
+        printf("Member list is full.\n");
+        return;
+    }
+    printf("Enter member name: ");
+    scanf(" %[^\n]", members[memberCount].name);
+    members[memberCount].memberID = memberCount + 1;
+    members[memberCount].booksIssued = 0;
+    memberCount++;
+    printf("Member added successfully.\n");
+}
+void viewMembers() {
+    if (memberCount == 0) {
+        printf("No members available.\n");
+        return;
+    }
+    printf("Library Members:\n");
+    for (int i = 0; i < memberCount; i++) {
+        printf("Member ID: %d\n", members[i].memberID);
+        printf("Name: %s\n", members[i].name);
+        printf("Books Issued: %d\n\n", members[i].booksIssued);
+    }
+}
+void issueBook() {
+    int bookID, memberID;
+    printf("Enter book ID to issue: ");
+    scanf("%d", &bookID);
+    printf("Enter member ID: ");
+    scanf("%d", &memberID);
+    if (bookID > bookCount || memberID > memberCount || library[bookID - 1].isIssued) {
+        printf("Invalid book ID or member ID, or the book is already issued.\n");
+        return;
+    }
+    library[bookID - 1].isIssued = 1;
+    members[memberID - 1].booksIssued++;
+    printf("Book issued successfully.\n");
+}
+void returnBook() {
+    int bookID, memberID;
+    printf("Enter book ID to return: ");
+    scanf("%d", &bookID);
+    printf("Enter member ID: ");
+    scanf("%d", &memberID);
+    if (bookID > bookCount || memberID > memberCount || !library[bookID - 1].isIssued) {
+        printf("Invalid book ID or member ID, or the book is not issued.\n");
+        return;
+    }
+    library[bookID - 1].isIssued = 0;
+    members[memberID - 1].booksIssued--;
+    printf("Book returned successfully.\n");
+}
+void searchBook() {
+    char title[TITLE_LENGTH];
+    printf("Enter book title to search: ");
+    scanf(" %[^\n]", title);
+    for (int i = 0; i < bookCount; i++) {
+        if (strcmp(library[i].title, title) == 0) {
+            printf("Book found:\n");
+            printf("Book ID: %d\n", library[i].bookID);
+            printf("Title: %s\n", library[i].title);
+            printf("Author: %s\n", library[i].author);
+            printf("Issued: %s\n\n", library[i].isIssued ? "Yes" : "No");
+            return;
+        }
+    }
+    printf("Book not found.\n");
+}
+void printMenu() {
+    printf("\nLibrary Management System\n");
+    printf("1. Add Book\n");
+    printf("2. View Books\n");
+    printf("3. Add Member\n");
+    printf("4. View Members\n");
+    printf("5. Issue Book\n");
+    printf("6. Return Book\n");
+    printf("7. Search Book\n");
+    printf("8. Exit\n");
+    printf("Enter your choice: ");
+}
+int main() {
+    int choice;
+    do {
+        printMenu();
+        scanf("%d", &choice);
+        switch (choice) {
+            case 1:
+                addBook();
+                break;
+            case 2:
+                viewBooks();
+                break;
+            case 3:
+                addMember();
+                break;
+            case 4:
+                viewMembers();
+                break;
+            case 5:
+                issueBook();
+                break;
+            case 6:
+                returnBook();
+                break;
+            case 7:
+                searchBook();
+                break;
+            case 8:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 8);
+    return 0;
+}
